@@ -6,6 +6,7 @@
   "dependencies": {
     "@types/johnny-five": "^2.1.4",
     "@types/serialport": "^8.0.2",
+    "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "johnny-five": "^2.1.0",
     "node-pixel": "^0.11.0",
@@ -19,7 +20,7 @@
     "typescript": "^5.2.2"
   },
   "scripts": {
-    "start": "node ./src/main.js",
+    "start": "node ./dist/main.js",
     "dev": "nodemon --exec ts-node ./src/main.ts",
     "build": "tsc"
   }
