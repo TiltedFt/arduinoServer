@@ -1,0 +1,60 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-color: black;
+}
+
+#color-picker-container {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+}
+
+#colorPicker {
+  width: 50px;
+  height: 30px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  border-radius: 2px;
+  color: white;
+}
+
+#btn {
+  color: white;
+  width: 100px;
+  height: 30px;
+  margin-left: 5px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.pixel-grid {
+  display: grid;
+  grid-template-columns: repeat(16, 30px);
+  grid-template-rows: repeat(16, 30px);
+  gap: 2px;
+}
+
+.pixel {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  border-radius: 2px;
+  color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel:hover {
+  background-color: lightgray;
+}

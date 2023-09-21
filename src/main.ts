@@ -3,8 +3,8 @@ const pixel = require("node-pixel");
 import express, { Request, Response } from "express";
 import * as bodyParser from "body-parser";
 import { isRGBValueNotValid } from "./utils";
-import { delay } from "./utils";
 import { startUpAnimation } from "./animations/startup";
+import path from "path";
 
 let strip: any = null;
 
@@ -20,7 +20,7 @@ board.on("ready", function () {
     board: this,
     controller: "FIRMATA",
     strips: [{ pin: 8, length: 256 }],
-    gamma: 1.0, // standard Gamma-Wert von WS2812
+    gamma: 2.0,
   });
 
   // Event, das aufgerufen wird, wenn der LED-Streifen bereit ist
@@ -64,6 +64,8 @@ app.delete("/clean", (req: Request, res: Response) => {
   strip.off(); // Schaltet den LED-Streifen aus
   return res.send("OK");
 });
+
+app.use(express.static(path.join(__dirname, "public")));
 
 // Startet den Express-Server
 app.listen(port, () => {

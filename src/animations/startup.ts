@@ -3,31 +3,55 @@ import { arrayOfPixels } from "../constant/constants";
 
 const animationDelay = 100;
 
-// Zeigt jeden Streifen senkrecht von der Mitte aus
+/**
+ * Setzt die Farbe für jeden Pixel in einem bestimmten vertikalen Streifen,
+ * beginnend von der Mitte des Streifens.
+ *
+ * @param index - Index des Streifens in arrayOfPixels
+ * @param strip - Das Pixel-Strip-Objekt
+ */
 async function showEachStripeFromMiddleVertically(index: number, strip: any) {
-  // Geht durch alle Pixel im gegebenen Streifen und setzt deren Farbe
+  // Nimmt jeden Pixel aus der Liste und weißt ihm die Farbe Pink zu
   for (const i of arrayOfPixels[index]) {
-    strip.pixel(i).color([20, 2, 0]);
+    strip.pixel(i).color([20, 5, 5]);
   }
 }
 
-// Schaltet jeden Streifen senkrecht von der Mitte aus ab
+/**
+ * Setzt die Farbe für jeden Pixel in einem bestimmten vertikalen Streifen auf Schwarz,
+ * beginnend von der Mitte des Streifens.
+ *
+ * @param index - Index des Streifens in arrayOfPixels
+ * @param strip - Das Pixel-Strip-Objekt
+ */
 async function turnOfEachStripeFromMiddle(index: number, strip: any) {
-  // Geht durch alle Pixel im gegebenen Streifen und setzt deren Farbe auf Schwarz
   for (const i of arrayOfPixels[index]) {
     strip.pixel(i).color([0, 0, 0]);
   }
 }
 
-// Startet die Startanimationsroutine
+/**
+ * Führt die Startanimation für den Pixel-Strip aus. Zuerst werden die Streifen von der Mitte aus eingeschaltet,
+ * dann von der Mitte aus ausgeschaltet.
+ *
+ * @param strip - Das Pixel-Strip-Objekt
+ */
 async function startUpAnimation(strip: any) {
   const arrLength = arrayOfPixels.length;
   const middle = arrLength / 2 - 1;
 
+  let leftSide = middle;
+  let rightSide = middle;
+
   // Schaltet die Streifen von der Mitte aus ein
   for (let i = 0; i <= middle; i++) {
-    const leftSide = middle - i;
-    const rightSide = middle + i;
+    // Spezialfall für den mittleren Streifen
+    if (leftSide === 7 && rightSide === 7) {
+      await showEachStripeFromMiddleVertically(leftSide, strip);
+    }
+
+    leftSide -= 1;
+    rightSide += 1;
 
     if (leftSide >= 0) {
       await showEachStripeFromMiddleVertically(leftSide, strip);
@@ -37,14 +61,22 @@ async function startUpAnimation(strip: any) {
       await showEachStripeFromMiddleVertically(rightSide, strip);
     }
 
-    await strip.show();
+    strip.show();
     await delay(animationDelay);
   }
 
+  leftSide = middle;
+  rightSide = middle;
+
   // Schaltet die Streifen von der Mitte aus wieder ab
   for (let i = 0; i <= middle; i++) {
-    const leftSide = middle - i;
-    const rightSide = middle + i;
+    // Spezialfall für den mittleren Streifen
+    if (leftSide === 7 && rightSide === 7) {
+      await turnOfEachStripeFromMiddle(leftSide, strip);
+    }
+
+    leftSide -= 1;
+    rightSide += 1;
 
     if (leftSide >= 0) {
       await turnOfEachStripeFromMiddle(leftSide, strip);
@@ -54,7 +86,7 @@ async function startUpAnimation(strip: any) {
       await turnOfEachStripeFromMiddle(rightSide, strip);
     }
 
-    await strip.show();
+    strip.show();
     await delay(animationDelay);
   }
 }
