@@ -2,42 +2,32 @@ import { Board } from "johnny-five";
 const pixel = require("node-pixel");
 import express, { Request, Response } from "express";
 import * as bodyParser from "body-parser";
-import { returnRandomRGBValue } from "./randomizer";
-import { checkIfNumber, isRGBValueNotValid } from "./utils";
-import { arrayOfPixels, pixels } from "./constant/heart";
-const board = new Board({ port: "/dev/tty.usbmodem101" });
+import { isRGBValueNotValid } from "./utils";
+import { delay } from "./utils";
+import { startUpAnimation } from "./animations/startup";
+
 let strip: any = null;
 
+// Initialisierung des Boards
+const board = new Board({ port: "/dev/tty.usbmodem101" });
+
+// Event, das aufgerufen wird, wenn das Board bereit ist
 board.on("ready", function () {
+  // LED-Streifen Initialisierung
   strip = new pixel.Strip({
     board: this,
     controller: "FIRMATA",
-    // pin = data pin
     strips: [{ pin: 8, length: 256 }],
-    gamma: 1.0, // standart gamm von WS2812
+    gamma: 1.0, // standard Gamma-Wert von WS2812
   });
 
+  // Event, das aufgerufen wird, wenn der LED-Streifen bereit ist
   strip.on("ready", async function () {
     console.log("Strip ready, let's go");
-    // clean everything
-    for (const i of pixels) {
-      strip.pixel(i).color([0, 0, 0]);
-    }
-    strip.show();
-    await delay(1000);
-    for (const arrPixel of arrayOfPixels) {
-      for (const pixel of arrPixel) {
-        strip.pixel(pixel).color([30, 30, 0]);
-        strip.show();
-        await delay(20);
-      }
-      for (const pixel of arrPixel) {
-        strip.pixel(pixel).color([0, 0, 0]);
-        strip.show();
-        await delay(20);
+    strip.off(); // Schaltet den LED-Streifen aus
 
-      }
-    }
+    // Startet die Startanimation
+    startUpAnimation(strip);
   });
 });
 
@@ -46,59 +36,34 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
+// Endpoint zum Ändern der LED-Farbe an einer bestimmten Position
 app.post("/led", (req: Request, res: Response) => {
   const { position, r, g, b } = req.body;
 
+  // Überprüft, ob die Werte Zahlen sind
   if (isNaN(position) || isNaN(r) || isNaN(g) || isNaN(b)) {
     return res.status(400).send("All values must be numbers");
   }
+
+  // Überprüft, ob die RGB-Werte im gültigen Bereich liegen
   if (isRGBValueNotValid(r) || isRGBValueNotValid(g) || isRGBValueNotValid(b)) {
     return res.status(400).send("RGB can only be between 0 and 255");
   }
 
-
+  // Setzt die Farbe für das Pixel an der gegebenen Position
   strip.pixel(position).color([r, g, b]);
   strip.show();
 
   return res.status(201).send("OK");
 });
 
+// Endpoint zum Ausschalten aller LEDs
 app.delete("/clean", (req: Request, res: Response) => {
-  for (const index of pixels) {
-    strip.pixel(index).color([0, 0, 0]);
-  }
-  strip.show();
+  strip.off(); // Schaltet den LED-Streifen aus
   return res.send("OK");
 });
 
-app.post("/random", (req: Request, res: Response) => {
-  randomEverything(strip);
-  return res.send("OK");
-});
-
-function randomEverything(strip: any) {
-  for (let i = 0; i < 216; i++) {
-    strip.pixel(i).color([returnRandomRGBValue(), returnRandomRGBValue(), returnRandomRGBValue()]);
-  }
-  strip.show();
-}
-
-app.post('/whole',async (req: Request, res: Response) => {
-  for(const i of pixels) {
-    strip.pixel(i).color([0, 100, 100])
-    strip.show()
-    await delay(100);
-    strip.pixel(i).color([0, 0, 0])
-  }
-  return res.send('OK')
-})
-function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
-
-
+// Startet den Express-Server
 app.listen(port, () => {
   console.log(`Express hört den Port: ${port} zu`);
 });
