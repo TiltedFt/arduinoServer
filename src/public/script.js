@@ -43,32 +43,6 @@ document.addEventListener('mouseup', () => {
   isMouseDown = false;
 });
 
-document.addEventListener('click', () => {
-  const selectedColor = document.getElementById('colorPicker').value;
-    const rgbSelectedColor = hexToRgb(selectedColor);
-
-    const currentBackgroundColor = this.style.backgroundColor;
-
-    if (currentBackgroundColor === rgbSelectedColor && !isMouseDown) {
-      this.style.backgroundColor = '#000';
-    } else {
-      this.style.backgroundColor = rgbSelectedColor;
-
-      const r = parseInt(selectedColor.slice(1, 3), 16);
-      const g = parseInt(selectedColor.slice(3, 5), 16);
-      const b = parseInt(selectedColor.slice(5, 7), 16);
-
-      let logObject = { position: parseInt(this.id), r: r, g: g, b: b };
-      console.log(logObject)
-      axios.post('/led', logObject)
-        .then(response => {
-          console.log('POST request successful:', response.data);
-        })
-        .catch(error => {
-          console.error('Error making POST request:', error);
-        });
-    }
-});
 
 const pixelsElements = document.querySelectorAll('.pixel');
 const btn = document.getElementById('btn');
@@ -104,7 +78,7 @@ function handlePixelColoring() {
       const b = parseInt(selectedColor.slice(5, 7), 16);
 
       let logObject = { position: parseInt(this.id), r: r, g: g, b: b };
-      
+
       axios.post('/led', logObject)
         .then(response => {
           console.log('POST request successful:', response.data);
@@ -150,7 +124,13 @@ pixelsElements.forEach(pixelElement => {
 
       let logObject = {position: parseInt(pixelElement.id), r: r, g: g, b: b}
 
-      console.log(logObject);
+      axios.post('/led', logObject)
+      .then(response => {
+        console.log('POST request successful:', response.data);
+      })
+      .catch(error => {
+        console.error('Error making POST request:', error);
+      });
     }
   });
 });
