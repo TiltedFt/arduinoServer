@@ -28,15 +28,13 @@ async function startUpAnimation(strip: any) {
   for (let i = 0; i <= middle; i++) {
     const leftSide = middle - i;
     const rightSide = middle + i;
-    console.log("turnOn", leftSide, rightSide);
 
     if (leftSide >= 0) {
       await showEachStripeFromMiddleVertically(leftSide, strip);
     }
 
-    if (rightSide < arrLength - 1) {
-      // Benutzt 'arrLength - 1' wegen 0-basierter Indizierung
-      await showEachStripeFromMiddleVertically(rightSide + 1, strip);
+    if (rightSide < arrLength) {
+      await showEachStripeFromMiddleVertically(rightSide, strip);
     }
 
     await strip.show();
@@ -47,15 +45,13 @@ async function startUpAnimation(strip: any) {
   for (let i = 0; i <= middle; i++) {
     const leftSide = middle - i;
     const rightSide = middle + i;
-    console.log("turnoff", leftSide, rightSide);
 
     if (leftSide >= 0) {
       await turnOfEachStripeFromMiddle(leftSide, strip);
     }
 
-    if (rightSide < arrLength - 1) {
-      // Wieder, benutzt 'arrLength - 1' wegen 0-basierter Indizierung
-      await turnOfEachStripeFromMiddle(rightSide + 1, strip);
+    if (rightSide < arrLength) {
+      await turnOfEachStripeFromMiddle(rightSide, strip);
     }
 
     await strip.show();

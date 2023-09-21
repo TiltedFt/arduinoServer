@@ -8,6 +8,8 @@ import { startUpAnimation } from "./animations/startup";
 
 let strip: any = null;
 
+// ls /dev/tty* - mac Ports
+
 // Initialisierung des Boards
 const board = new Board({ port: "/dev/tty.usbmodem101" });
 
